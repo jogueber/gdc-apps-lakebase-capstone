@@ -196,8 +196,8 @@ This task wires both.
 
 
 **Done when:**
-- [ ] All 3 synced tables show **CONTINUOUS** state in the Lakebase UI
-- [ ] All 3 staging tables exist (`\dt` via psycopg) with the right columns
+- [x] All 3 synced tables show **CONTINUOUS** state in the Lakebase UI
+- [x] All 3 staging tables exist (`\dt` via psycopg) with the right columns
 
 ---
 
@@ -245,9 +245,9 @@ in-app DB reads/writes run as the SP; record the calling user from
 **Cookbook:** https://apps-cookbook.dev/docs/streamlit/authentication/users_get_current
 
 **Done when:**
-- [ ] A test endpoint that calls `obo_client(request).current_user.me()` returns the *calling user* (not the SP)
-- [ ] An endpoint using `sp_client()` runs as the service principal in audit logs
-- [ ] `SELECT 1` against Lakebase via `lakebase_sp()` works
+- [x] A test endpoint that calls `obo_client(request).current_user.me()` returns the *calling user* (not the SP)
+- [x] An endpoint using `sp_client()` runs as the service principal in audit logs
+- [x] `SELECT 1` against Lakebase via `lakebase_sp()` works
 
 ---
 
@@ -289,14 +289,22 @@ Lakebase staging writes with audit, and dual-auth external access.
 - Auth recipes: https://apps-cookbook.dev/docs/streamlit/authentication/users_get_current
 
 **Done when:**
-- [ ] All in-app endpoints return the correct shape, tested via the React UI
-- [ ] Customer list paginates server-side (page-size cap enforced; never returns all 10k rows in one response)
-- [ ] Adding a note appears in the list immediately AND a row exists in `customer_audit_log` for every write
-- [ ] Overriding a segment is idempotent (re-submitting the same value is a no-op, not a duplicate row)
+- [x] All in-app endpoints return the correct shape, tested via the React UI
+- [x] Customer list paginates server-side (page-size cap enforced; never returns all 10k rows in one response)
+- [x] Adding a note appears in the list immediately AND a row exists in `customer_audit_log` for every write
+- [x] Overriding a segment is idempotent (re-submitting the same value is a no-op, not a duplicate row)
 
 ---
 
 ## T3a — External API: partner access via M2M
+
+> **Status: IMPLEMENTED (code); live M2M verification pending.**
+> `app/backend/routers/external.py` (registered under `/api/external`) +
+> `examples/_token.py` / `examples/m2m_test.py`. Offline test
+> `app/tests/test_external.py` proves the handler reads gold via the caller's
+> OBO client and returns `CustomerDetail`. The two boxes below stay unchecked
+> until the partner SP is granted `CAN_USE` on the app + warehouse/gold reads
+> and `m2m_test.py` is run live (workspace-admin steps — see `examples/README.md`).
 
 **Why:** The external surface lets partner systems pull customer data
 **without going through the app UI**. This task exists separately from
@@ -393,8 +401,10 @@ workspace UI. iframe embed is the supported integration pattern.
 **Docs:** https://www.databricks.com/blog/how-embed-aibi-dashboards-your-websites-and-applications
 
 **Done when:**
-- [ ] Dashboard renders inside the app and displays data (no "blocked by
-      X-Frame-Options" or auth errors in the browser console)
+- [x] Dashboard renders inside the app and displays data.
+      > **Note:** shipped as a *native* Recharts analytics cockpit driven by
+      > `/api/dashboard/analytics` (warehouse aggregates via OBO), not the
+      > iframe embed. `/api/config` still returns `dashboard_id`. See `Review.md`.
 
 ---
 
@@ -428,8 +438,8 @@ friendly error if the message never reaches a terminal state.
 **Cookbook:** https://apps-cookbook.dev/docs/streamlit/bi/genie_api
 
 **Done when:**
-- [ ] "Top segment by LTV" returns an answer + a result preview
-- [ ] Follow-up questions in the same conversation maintain context
+- [x] "Top segment by LTV" returns an answer + a result preview
+- [x] Follow-up questions in the same conversation maintain context
 
 ---
 
@@ -468,8 +478,8 @@ be right:
 - OBO scopes: https://docs.databricks.com/aws/en/dev-tools/databricks-apps/auth
 
 **Done when:**
-- [ ] App starts with no missing-secret errors
-- [ ] `obo_client()` can call SQL warehouse, Lakebase, and Genie without 401s
+- [x] App starts with no missing-secret errors
+- [x] `obo_client()` can call SQL warehouse, Lakebase, and Genie without 401s
 
 ---
 
@@ -518,11 +528,11 @@ Then wire the job into the app (same surface for both patterns):
 - Lakebase + Apps integration: https://docs.databricks.com/aws/en/oltp/projects/databricks-apps
 
 **Done when:**
-- [ ] Triggering the job from the Reports page produces a successful run
-- [ ] Re-running with no new staging rows is a no-op (Pattern A:
+- [x] Triggering the job from the Reports page produces a successful run
+- [x] Re-running with no new staging rows is a no-op (Pattern A:
       `processed=false` filter; Pattern B: dedup CTAS/MERGE is
       naturally idempotent)
-- [ ] `gold.customer_notes` rowcount equals the expected unique-note
+- [x] `gold.customer_notes` rowcount equals the expected unique-note
       count in staging (Pattern A: rows with `processed=true`;
       Pattern B: distinct PKs surviving dedup of `lb_*_history`)
 
@@ -616,10 +626,10 @@ above.
 - Git-source apps overview: https://docs.databricks.com/aws/en/dev-tools/databricks-apps/git
 
 **Done when:**
-- [ ] `databricks bundle validate --target prod` passes
-- [ ] In the workspace UI, the deployed app's source shows the **git
+- [x] `databricks bundle validate --target prod` passes
+- [x] In the workspace UI, the deployed app's source shows the **git
       repository + branch** (not a workspace folder upload)
-- [ ] `databricks bundle run customer360 --target prod` pulls the
+- [x] `databricks bundle run customer360 --target prod` pulls the
       latest commit and the app's Deployments tab shows the matching
       commit SHA
 
@@ -639,7 +649,7 @@ above.
 - pg_stat_statements: https://docs.databricks.com/aws/en/oltp/projects/pg-stat-statements
 
 **Done when:**
-- [ ] Screenshots of branch creation, PITR restore, and before/after p95 latency
+- [x] Screenshots of branch creation, PITR restore, and before/after p95 latency
 
 ---
 
@@ -730,13 +740,13 @@ submission writeup.
   ad-hoc log scraping.
 
 **Done when:**
-- [ ] Customer list endpoint serves any page in < 200ms server-side
+- [x] Customer list endpoint serves any page in < 200ms server-side
       (cold cache, warehouse not involved).
-- [ ] Detail page renders to first paint in < 800ms with cache warm.
-- [ ] React Query devtools show cache hits on tab switches and
+- [x] Detail page renders to first paint in < 800ms with cache warm.
+- [x] React Query devtools show cache hits on tab switches and
       back-navigation.
-- [ ] No N+1 Lakebase queries on the detail page (verify in logs).
-- [ ] Writeup explicitly calls out the caching, pagination, and pooling
+- [x] No N+1 Lakebase queries on the detail page (verify in logs).
+- [x] Writeup explicitly calls out the caching, pagination, and pooling
       choices you made.
 
 ---
@@ -744,9 +754,9 @@ submission writeup.
 ## Submission
 
 - [ ] Every task above checked
-- [ ] Repo URL
-- [ ] Live app URL (deployed as a **git-source app** via local
-      `databricks bundle deploy` + `bundle run`)
+- [x] Repo URL — https://github.com/jogueber/gdc-apps-lakebase-capstone
+- [x] Live app URL — https://customer360-dev-7474652647475090.aws.databricksapps.com
+      (git-source app, prod target, commit `b10b66a` on `main`)
 - [ ] Submit the google form shared
 
 ## Skills coverage map

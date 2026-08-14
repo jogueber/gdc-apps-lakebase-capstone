@@ -18,9 +18,10 @@ from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from .db import close_pool, lakebase_sp
-from .routers import customers, dashboard, genie, jobs
+from .logging_config import configure_logging, request_id_var
+from .routers import customers, dashboard, external, genie, jobs
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
+configure_logging(logging.INFO)
 log = logging.getLogger(__name__)
 
 _STATIC_DIR = Path(__file__).resolve().parent / "static"
@@ -84,6 +85,8 @@ async def permission_error_handler(_: Request, exc: PermissionError):
 @app.middleware("http")
 async def request_id(request: Request, call_next):
     rid = request.headers.get("X-Request-Id") or str(uuid.uuid4())
+    # Expose the id to the JSON log formatter for this request's context.
+    request_id_var.set(rid)
     # Correlate the request id with the OTel trace so a log/trace lookup by
     # X-Request-Id resolves the whole React → FastAPI → Lakebase/SQL span tree.
     if trace is not None:
@@ -105,6 +108,7 @@ async def request_id(request: Request, call_next):
 
 app.include_router(customers.router)
 app.include_router(dashboard.router)
+app.include_router(external.router)
 app.include_router(genie.router)
 app.include_router(jobs.router)
 
