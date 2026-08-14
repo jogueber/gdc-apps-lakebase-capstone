@@ -1,15 +1,7 @@
 # Capstone — Databricks Apps + Lakebase
 
-A hands-on capstone project: build "Customer 360 for Acme Retail" — a
-React + FastAPI app on Databricks Apps, backed by Lakebase (synced reads
-and writable staging tables), embedded AI/BI dashboards, Genie chat, and a
-scheduled forward-ETL job.
 
-The kit ships a one-line installer, a blank scaffold (you write the code),
-and a checklist of 14 tasks (`CAPSTONE_TASKS.md`) covering every skill from
-the Apps + Lakebase training: OBO/SP auth, Lakebase CRUD, synced + staging
-tables, reverse + forward ETL, Genie integration, dashboard embed, DABs
-CI/CD, and external M2M/U2M auth.
+FOR REVIEWERS: please check [the review doc](Review.md).
 
 ## Install
 
