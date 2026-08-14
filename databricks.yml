@@ -11,7 +11,7 @@ variables:
   catalog:           { default: "test_jg_catalog" }
   pg_uc_catalog:     { default: "test_jg_catalog" }
   git_repo_url:      { default: "https://github.com/jogueber/gdc-apps-lakebase-capstone" }
-  git_branch:        { default: "t5" }
+  git_branch:        { default: "main" }
 
 targets:
   dev:
@@ -23,5 +23,6 @@ targets:
     mode: production
     workspace:
       host: https://fevm-test-jg.cloud.databricks.com
+      root_path: /Workspace/Users/johannes.gunther@databricks.com/.bundle/${bundle.name}/${bundle.target}
     variables:
       git_branch: "main"

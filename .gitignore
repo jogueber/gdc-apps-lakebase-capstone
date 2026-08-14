@@ -5,3 +5,10 @@ __pycache__/
 *.tar.gz
 .DS_Store
 .isaac/
+
+capstone-app/.impeccable
+capstone-app/.playwright-mcp
+
+capstone-app/.vite
+.claude/
+.vscode/
